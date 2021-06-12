@@ -62,6 +62,7 @@ int getPGMColumns(char *fileName)
             memset(buffer, 0, sizeof(buffer));
         }
     }
+    return -1;
 }
 
 int getPGMRows(char *fileName)
@@ -92,6 +93,7 @@ int getPGMRows(char *fileName)
             memset(buffer, 0, sizeof(buffer));
         }
     }
+    return -1;
 }
 
 FILE *readFile(char *fileName)
