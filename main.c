@@ -9,7 +9,6 @@ int *getPGMData(char *fileName);
 FILE *readFile(char *fileName);
 int main()
 {
-    printf("Program starting\n");
     FILE *fp;
     char ch, fileName[25];
     printf("Enter filename: ");
@@ -17,7 +16,6 @@ int main()
 
     fp = readFile(fileName);
 
-    printf("Reading...\n");
     int rows = getPGMRows(fileName);
     int columns = getPGMColumns(fileName);
     int *imgArrPtr = getPGMData(fileName);
@@ -126,7 +124,6 @@ int *getPGMData(char *fileName){
         }
         else
         {
-            printf("%s\n", buffer);
             reading = 0;
             counter++;
             if (counter > 4)
