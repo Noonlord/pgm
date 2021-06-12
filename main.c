@@ -5,14 +5,15 @@
 
 int getPGMColumns(char *fileName);
 int getPGMRows(char *fileName);
+int getPGMGrayValue(char *fileName);
 int *getPGMData(char *fileName);
 FILE *readFile(char *fileName);
 FILE *writeFile(char *fileName);
 
 int main()
 {
-    FILE *fp;
-    char ch, fileName[25];
+    FILE *fp, *outFp;
+    char ch, fileName[25], outName[25];
     printf("Enter filename: ");
     gets(fileName);
 
@@ -21,7 +22,12 @@ int main()
     int rows = getPGMRows(fileName);
     int columns = getPGMColumns(fileName);
     int *imgArrPtr = getPGMData(fileName);
+    int maxGray = getPGMGrayValue(fileName);
     int length = rows * columns;
+    printf("Enter output compressed filename: ");
+    gets(outName);
+    outFp = writeFile(outName);
+    fprintf(outFp, "%d\n%d\n%d\n", rows, columns, maxGray);
     int i;
     for (i = 0; i < length; i++)
     {
@@ -31,7 +37,7 @@ int main()
             count++;
             i++;
         }
-        printf("%d %d ", count, *(imgArrPtr + i));
+        fprintf(outFp, "%d %d ", count, *(imgArrPtr + i));
     }
     return 0;
 }
@@ -93,6 +99,38 @@ int getPGMRows(char *fileName)
                 sscanf(buffer, "%d", &rows);
                 fclose(fp);
                 return rows;
+            }
+            memset(buffer, 0, sizeof(buffer));
+        }
+    }
+    return -1;
+}
+
+int getPGMGrayValue(char *fileName)
+{
+    FILE *fp;
+    fp = readFile(fileName);
+    int reading = 0;
+    int counter = 0;
+    int grayValue;
+    char ch;
+    while ((ch = fgetc(fp)) != EOF && counter < 4)
+    {
+        char buffer[4];
+        if (ch != ' ' & ch != '\n')
+        {
+            buffer[reading] = ch;
+            reading++;
+        }
+        else
+        {
+            reading = 0;
+            counter++;
+            if (counter == 4)
+            {
+                sscanf(buffer, "%d", &grayValue);
+                fclose(fp);
+                return grayValue;
             }
             memset(buffer, 0, sizeof(buffer));
         }
