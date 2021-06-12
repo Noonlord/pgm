@@ -5,6 +5,7 @@
 
 int getPGMColumns(char *fileName);
 int getPGMRows(char *fileName);
+int *getPGMData(char *fileName);
 FILE *readFile(char *fileName);
 int main()
 {
@@ -17,54 +18,9 @@ int main()
     fp = readFile(fileName);
 
     printf("Reading...\n");
-    int reading = 0;
-    int counter = 0;
-    int rows = 0;
-    int columns = 0;
-    int *imgArrPtr;
-    while ((ch = fgetc(fp)) != EOF)
-    {
-        char buffer[4];
-        if (ch != ' ' & ch != '\n')
-        {
-            buffer[reading] = ch;
-            reading++;
-        }
-        else
-        {
-            printf("%s\n", buffer);
-            reading = 0;
-            counter++;
-            if (counter == 1)
-            {
-                if (!strcmp(buffer, "P2"))
-                {
-                    printf("File is ASCII format");
-                }
-            }
-            else if (counter == 2)
-                sscanf(buffer, "%d", &columns);
-            else if (counter == 3)
-            {
-                sscanf(buffer, "%d", &rows);
-                imgArrPtr = (int *)malloc(columns * rows * sizeof(int));
-            }
-            else if (counter != 4)
-            {
-                if (isdigit(buffer[0]))
-                    sscanf(buffer, "%d", imgArrPtr + counter - 5);
-                else
-                {
-                    counter--;
-                }
-            }
-            memset(buffer, 0, sizeof(buffer));
-        }
-    }
-    printf("Rows: %d\n", getPGMRows(fileName));
-    printf("Cols: %d\n", getPGMColumns(fileName));
-    printf("66th: %d\n", *(imgArrPtr + 64));
-    printf("Last element: %d\n", *(imgArrPtr + columns * rows - 1));
+    int rows = getPGMRows(fileName);
+    int columns = getPGMColumns(fileName);
+    int *imgArrPtr = getPGMData(fileName);
     int length = rows * columns;
     int i;
     for (i = 0; i < length; i++)
@@ -77,8 +33,6 @@ int main()
         }
         printf("%d %d ", count, *(imgArrPtr + i));
     }
-
-    fclose(fp);
     return 0;
 }
 
@@ -152,4 +106,40 @@ FILE *readFile(char *fileName)
         exit(EXIT_FAILURE);
     }
     return fp;
+}
+
+int *getPGMData(char *fileName){
+    FILE *fp;
+    fp = readFile(fileName);
+    int reading = 0;
+    char ch;
+    int counter = 0;
+    int *imgArrPtr;
+    imgArrPtr = (int *)malloc(getPGMColumns(fileName) * getPGMRows(fileName) * sizeof(int));
+    while ((ch = fgetc(fp)) != EOF)
+    {
+        char buffer[4];
+        if (ch != ' ' & ch != '\n')
+        {
+            buffer[reading] = ch;
+            reading++;
+        }
+        else
+        {
+            printf("%s\n", buffer);
+            reading = 0;
+            counter++;
+            if (counter > 4)
+            {
+                if (isdigit(buffer[0]))
+                    sscanf(buffer, "%d", imgArrPtr + counter - 5);
+                else
+                {
+                    counter--;
+                }
+            }
+            memset(buffer, 0, sizeof(buffer));
+        }
+    }
+    return imgArrPtr;
 }
