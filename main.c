@@ -3,54 +3,58 @@
 #include <strings.h>
 #include <ctype.h>
 
-int getPGMColumns(char* fileName);
-int getPGMRows(char* fileName);
-FILE * readFile(char* fileName);
-int main(){
+int getPGMColumns(char *fileName);
+int getPGMRows(char *fileName);
+FILE *readFile(char *fileName);
+int main()
+{
     printf("Program starting\n");
     FILE *fp;
     char ch, fileName[25];
     printf("Enter filename: ");
     gets(fileName);
 
-    fp = fopen(fileName, "r");
-
-    if(fp == NULL){
-        printf("File couldn't be opened");
-        exit(EXIT_FAILURE);
-    }
+    fp = readFile(fileName);
 
     printf("Reading...\n");
     int reading = 0;
     int counter = 0;
     int rows = 0;
     int columns = 0;
-    int * imgArrPtr;
-    while((ch=fgetc(fp)) != EOF){
+    int *imgArrPtr;
+    while ((ch = fgetc(fp)) != EOF)
+    {
         char buffer[4];
-        if(ch != ' ' & ch != '\n'){
+        if (ch != ' ' & ch != '\n')
+        {
             buffer[reading] = ch;
             reading++;
         }
-        else {
+        else
+        {
             printf("%s\n", buffer);
             reading = 0;
             counter++;
-            if (counter == 1){
-                if(!strcmp(buffer, "P2")){
+            if (counter == 1)
+            {
+                if (!strcmp(buffer, "P2"))
+                {
                     printf("File is ASCII format");
                 }
             }
             else if (counter == 2)
                 sscanf(buffer, "%d", &columns);
-            else if (counter == 3){
+            else if (counter == 3)
+            {
                 sscanf(buffer, "%d", &rows);
-                imgArrPtr = (int*) malloc(columns * rows * sizeof(int));
+                imgArrPtr = (int *)malloc(columns * rows * sizeof(int));
             }
-            else if (counter != 4) {
-                if(isdigit(buffer[0]))
+            else if (counter != 4)
+            {
+                if (isdigit(buffer[0]))
                     sscanf(buffer, "%d", imgArrPtr + counter - 5);
-                else{
+                else
+                {
                     counter--;
                 }
             }
@@ -66,35 +70,40 @@ int main(){
     for (i = 0; i < length; i++)
     {
         int count = 1;
-        while (i < length -1 && *(imgArrPtr + i) == *(imgArrPtr + i + 1))
+        while (i < length - 1 && *(imgArrPtr + i) == *(imgArrPtr + i + 1))
         {
             count++;
             i++;
         }
         printf("%d %d ", count, *(imgArrPtr + i));
     }
-    
+
     fclose(fp);
     return 0;
 }
 
-int getPGMColumns(char* fileName){
+int getPGMColumns(char *fileName)
+{
     FILE *fp;
     fp = readFile(fileName);
     int reading = 0;
     int counter = 0;
     int columns;
     char ch;
-        while((ch=fgetc(fp)) != EOF && counter < 2){
+    while ((ch = fgetc(fp)) != EOF && counter < 2)
+    {
         char buffer[4];
-        if(ch != ' ' & ch != '\n'){
+        if (ch != ' ' & ch != '\n')
+        {
             buffer[reading] = ch;
             reading++;
         }
-        else {
+        else
+        {
             reading = 0;
             counter++;
-            if (counter == 2){
+            if (counter == 2)
+            {
                 sscanf(buffer, "%d", &columns);
                 return columns;
             }
@@ -103,23 +112,28 @@ int getPGMColumns(char* fileName){
     }
 }
 
-int getPGMRows(char* fileName){
+int getPGMRows(char *fileName)
+{
     FILE *fp;
     fp = readFile(fileName);
     int reading = 0;
     int counter = 0;
     int rows;
     char ch;
-        while((ch=fgetc(fp)) != EOF && counter < 3){
+    while ((ch = fgetc(fp)) != EOF && counter < 3)
+    {
         char buffer[4];
-        if(ch != ' ' & ch != '\n'){
+        if (ch != ' ' & ch != '\n')
+        {
             buffer[reading] = ch;
             reading++;
         }
-        else {
+        else
+        {
             reading = 0;
             counter++;
-            if (counter == 3){
+            if (counter == 3)
+            {
                 sscanf(buffer, "%d", &rows);
                 return rows;
             }
@@ -128,10 +142,12 @@ int getPGMRows(char* fileName){
     }
 }
 
-FILE * readFile(char* fileName){
+FILE *readFile(char *fileName)
+{
     FILE *fp;
     fp = fopen(fileName, "r");
-    if(fp == NULL){
+    if (fp == NULL)
+    {
         printf("File couldn't be opened");
         exit(EXIT_FAILURE);
     }
