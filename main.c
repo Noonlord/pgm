@@ -6,6 +6,7 @@
 int getPGMColumns(char *fileName);
 int getPGMRows(char *fileName);
 int getPGMGrayValue(char *fileName);
+int getElementFromFile(char *fileName, int pos);
 int *getPGMData(char *fileName);
 FILE *readFile(char *fileName);
 FILE *writeFile(char *fileName);
@@ -41,16 +42,16 @@ int main()
     }
     return 0;
 }
-
-int getPGMColumns(char *fileName)
+int getElementFromFile(char *fileName, int pos)
 {
     FILE *fp;
     fp = readFile(fileName);
     int reading = 0;
     int counter = 0;
-    int columns;
+    pos++;
+    int data;
     char ch;
-    while ((ch = fgetc(fp)) != EOF && counter < 2)
+    while ((ch = fgetc(fp)) != EOF && counter < pos)
     {
         char buffer[4];
         if (ch != ' ' & ch != '\n')
@@ -62,80 +63,31 @@ int getPGMColumns(char *fileName)
         {
             reading = 0;
             counter++;
-            if (counter == 2)
+            if (counter == pos)
             {
-                sscanf(buffer, "%d", &columns);
+                sscanf(buffer, "%d", &data);
                 fclose(fp);
-                return columns;
+                return data;
             }
             memset(buffer, 0, sizeof(buffer));
         }
     }
     return -1;
+}
+
+int getPGMColumns(char *fileName)
+{
+    return getElementFromFile(fileName, 1);
 }
 
 int getPGMRows(char *fileName)
 {
-    FILE *fp;
-    fp = readFile(fileName);
-    int reading = 0;
-    int counter = 0;
-    int rows;
-    char ch;
-    while ((ch = fgetc(fp)) != EOF && counter < 3)
-    {
-        char buffer[4];
-        if (ch != ' ' & ch != '\n')
-        {
-            buffer[reading] = ch;
-            reading++;
-        }
-        else
-        {
-            reading = 0;
-            counter++;
-            if (counter == 3)
-            {
-                sscanf(buffer, "%d", &rows);
-                fclose(fp);
-                return rows;
-            }
-            memset(buffer, 0, sizeof(buffer));
-        }
-    }
-    return -1;
+    return getElementFromFile(fileName, 2);
 }
 
 int getPGMGrayValue(char *fileName)
 {
-    FILE *fp;
-    fp = readFile(fileName);
-    int reading = 0;
-    int counter = 0;
-    int grayValue;
-    char ch;
-    while ((ch = fgetc(fp)) != EOF && counter < 4)
-    {
-        char buffer[4];
-        if (ch != ' ' & ch != '\n')
-        {
-            buffer[reading] = ch;
-            reading++;
-        }
-        else
-        {
-            reading = 0;
-            counter++;
-            if (counter == 4)
-            {
-                sscanf(buffer, "%d", &grayValue);
-                fclose(fp);
-                return grayValue;
-            }
-            memset(buffer, 0, sizeof(buffer));
-        }
-    }
-    return -1;
+    return getElementFromFile(fileName, 3);
 }
 
 FILE *readFile(char *fileName)
