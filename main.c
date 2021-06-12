@@ -59,6 +59,7 @@ int getPGMColumns(char *fileName)
             if (counter == 2)
             {
                 sscanf(buffer, "%d", &columns);
+                fclose(fp);
                 return columns;
             }
             memset(buffer, 0, sizeof(buffer));
@@ -90,6 +91,7 @@ int getPGMRows(char *fileName)
             if (counter == 3)
             {
                 sscanf(buffer, "%d", &rows);
+                fclose(fp);
                 return rows;
             }
             memset(buffer, 0, sizeof(buffer));
@@ -153,5 +155,6 @@ int *getPGMData(char *fileName){
             memset(buffer, 0, sizeof(buffer));
         }
     }
+    fclose(fp);
     return imgArrPtr;
 }
