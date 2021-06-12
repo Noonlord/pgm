@@ -7,6 +7,8 @@ int getPGMColumns(char *fileName);
 int getPGMRows(char *fileName);
 int *getPGMData(char *fileName);
 FILE *readFile(char *fileName);
+FILE *writeFile(char *fileName);
+
 int main()
 {
     FILE *fp;
@@ -100,6 +102,17 @@ FILE *readFile(char *fileName)
 {
     FILE *fp;
     fp = fopen(fileName, "r");
+    if (fp == NULL)
+    {
+        printf("File couldn't be opened");
+        exit(EXIT_FAILURE);
+    }
+    return fp;
+}
+FILE *writeFile(char *fileName)
+{
+    FILE *fp;
+    fp = fopen(fileName, "w");
     if (fp == NULL)
     {
         printf("File couldn't be opened");
