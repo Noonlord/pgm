@@ -141,7 +141,10 @@ int *getPGMDataFromCMP(char *fileName){
     char ch;
     int counter = 0;
     int pixel = 0;
-    int *imgArrPtr = (int *)malloc(getElementFromFile(fileName, 0) * getElementFromFile(fileName, 1) * sizeof(int));
+    int pixelCount = 0;
+    int lastColor = -1;
+    int size = getElementFromFile(fileName, 0) * getElementFromFile(fileName, 1);
+    int *imgArrPtr = (int *)malloc(size * sizeof(int));
     while ((ch = fgetc(fp)) != EOF)
     {
         char buffer[8];
@@ -159,9 +162,40 @@ int *getPGMDataFromCMP(char *fileName){
                 if (!isdigit(buffer[0])){
                     counter--;
                 }
+                else {
+                    if (!(counter%2)){
+                        int tmp;
+                        sscanf(buffer, "%d", &tmp);
+                        pixelCount += tmp;
+                    }
+                    else{
+                        int tmp;
+                        sscanf(buffer, "%d", &tmp);
+                        if (tmp<0 || tmp>255){
+                            printf("Invalid colors!!\n");
+                            exit(EXIT_FAILURE);
+                        }
+                        if (lastColor == tmp){
+                            printf("Subsequent same colors!! \n");
+                            exit(EXIT_FAILURE);
+                        }
+                        else{
+                            lastColor = tmp;
+                        }
+                    }
+                }
             }
             memset(buffer, 0, sizeof(buffer));
         }
+    }
+    printf("No subsequent colors found!\n");
+    printf("All colors valid!\n");
+    if (pixelCount != size){
+        printf("Pixel count doesn't match up with Rows x Columns!\n");
+        exit(EXIT_FAILURE);
+    }
+    else{
+        printf("Pixel count matches!");
     }
     rewind(fp);
     int rleLength = counter - 3;
