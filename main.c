@@ -12,6 +12,8 @@ int *getPGMDataFromCMP(char *fileName);
 int *getCMPData(char *fileName);
 void compress(char *inFile, char *outFile);
 void decompress(char *inFile, char *outFile);
+void changeColor(char *inFile, int colorToChange, int targetColor);
+void calculateHistogram(char *inFile);
 FILE *readFile(char *fileName);
 FILE *writeFile(char *fileName);
 
@@ -26,6 +28,7 @@ int main()
     printf("Tamamlandi. \nDecompress: ");
     gets(uncompName);
     decompress(uncompName, "test_decoded.pgm");
+    calculateHistogram(uncompName);
     return 0;
 }
 int getElementFromFile(char *fileName, int pos)
@@ -256,7 +259,7 @@ int *getPGMDataFromCMP(char *fileName){
         exit(EXIT_FAILURE);
     }
     else{
-        printf("Pixel count matches!");
+        printf("Pixel count matches!\n");
     }
     rewind(fp);
     int rleLength = counter - 3;
@@ -335,4 +338,41 @@ void compress(char *inFile, char *outFile){
         fprintf(fp, "%d %d ", count, *(imgArrPtr + i));
     }
     fclose(fp);
+}
+
+void changeColor(char *inFile, int colorToChange, int targetColor){
+    int *data = getCMPData(inFile);
+    int i;
+    FILE *fp = readFile(inFile);
+    int rows = getElementFromFile(inFile, 0);
+    int columns = getElementFromFile(inFile, 1);
+    int gray = getElementFromFile(inFile, 2);
+    fclose(fp);
+    for(i = 1; i < (*(data) + 1); i++){
+        if(!(i%2)){
+            if (*(data + i) == colorToChange){
+                *(data + i) = targetColor;
+            } 
+        }
+    }
+    fp = writeFile(inFile);
+    fprintf(fp, "%d\n%d\n%d\n", rows, columns, gray);
+    for(i = 1; i < (*(data) + 1); i++){
+        fprintf(fp, "%d ", *(data + i));
+    }
+    fclose(fp);
+}
+
+void calculateHistogram(char *inFile){
+    int *data = getCMPData(inFile);
+    int i;
+    int count[256] = {0};
+    for(i = 2; i < (*(data) + 1); i+=2){
+        count[*(data + i)] += *(data + i -1);
+        }
+    for(i=0; i < 256; i++){
+        if(count[i] > 0){
+            printf("%d times %d value\n",count[i], i);
+        }
+    }
 }
