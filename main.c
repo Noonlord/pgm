@@ -9,43 +9,21 @@ int getPGMGrayValue(char *fileName);
 int getElementFromFile(char *fileName, int pos);
 int *getPGMData(char *fileName);
 int *getPGMDataFromCMP(char *fileName);
+void compress(char *inFile, char *outFile);
 void decompress(char *inFile, char *outFile);
 FILE *readFile(char *fileName);
 FILE *writeFile(char *fileName);
 
 int main()
 {
-    FILE *fp, *outFp;
     char ch, fileName[25], outName[25], uncompName[25];
     printf("Enter filename: ");
     gets(fileName);
-
-    fp = readFile(fileName);
-
-    int rows = getPGMRows(fileName);
-    int columns = getPGMColumns(fileName);
-    int *imgArrPtr = getPGMData(fileName);
-    int maxGray = getPGMGrayValue(fileName);
-    int length = rows * columns;
     printf("Enter output compressed filename: ");
     gets(outName);
-    outFp = writeFile(outName);
-    fprintf(outFp, "%d\n%d\n%d\n", rows, columns, maxGray);
-    int i;
-    for (i = 0; i < length; i++)
-    {
-        int count = 1;
-        while (i < length - 1 && *(imgArrPtr + i) == *(imgArrPtr + i + 1))
-        {
-            count++;
-            i++;
-        }
-        fprintf(outFp, "%d %d ", count, *(imgArrPtr + i));
-    }
+    compress(fileName, outName);
     printf("Tamamlandi. \nDecompress: ");
-    fclose(outFp);
     gets(uncompName);
-    printf("%d rows, %d columns, %d gray", getElementFromFile(uncompName, 0), getElementFromFile(uncompName, 1), getElementFromFile(uncompName, 2));
     decompress(uncompName, "test_decoded.pgm");
     return 0;
 }
@@ -240,6 +218,28 @@ void decompress(char *inFile, char *outFile){
     for (i = 0; i < rows * columns; i++)
     {
         fprintf(fp, "%d ", *(data + i));
+    }
+    fclose(fp);
+}
+
+void compress(char *inFile, char *outFile){
+    int rows = getPGMRows(inFile);
+    int columns = getPGMColumns(inFile);
+    int *imgArrPtr = getPGMData(inFile);
+    int maxGray = getPGMGrayValue(inFile);
+    int length = rows * columns;
+    FILE *fp = writeFile(outFile);
+    fprintf(fp, "%d\n%d\n%d\n", rows, columns, maxGray);
+    int i;
+    for (i = 0; i < length; i++)
+    {
+        int count = 1;
+        while (i < length - 1 && *(imgArrPtr + i) == *(imgArrPtr + i + 1))
+        {
+            count++;
+            i++;
+        }
+        fprintf(fp, "%d %d ", count, *(imgArrPtr + i));
     }
     fclose(fp);
 }
