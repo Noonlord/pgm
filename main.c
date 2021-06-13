@@ -29,6 +29,7 @@ int main()
 }
 int getElementFromFile(char *fileName, int pos)
 {
+    printf("\ngetElementFromFile(%s, %d)", fileName, pos);
     FILE *fp;
     fp = readFile(fileName);
     int reading = 0;
@@ -38,7 +39,7 @@ int getElementFromFile(char *fileName, int pos)
     char ch;
     while ((ch = fgetc(fp)) != EOF && counter < pos)
     {
-        char buffer[4];
+        char buffer[8];
         if (ch != ' ' & ch != '\n')
         {
             buffer[reading] = ch;
@@ -109,7 +110,7 @@ int *getPGMData(char *fileName){
     imgArrPtr = (int *)malloc(getPGMColumns(fileName) * getPGMRows(fileName) * sizeof(int));
     while ((ch = fgetc(fp)) != EOF)
     {
-        char buffer[4];
+        char buffer[8];
         if (ch != ' ' & ch != '\n')
         {
             buffer[reading] = ch;
@@ -145,7 +146,7 @@ int *getPGMDataFromCMP(char *fileName){
     int *imgArrPtr = (int *)malloc(getElementFromFile(fileName, 0) * getElementFromFile(fileName, 1) * sizeof(int));
     while ((ch = fgetc(fp)) != EOF)
     {
-        char buffer[4];
+        char buffer[8];
         if (ch != ' ' & ch != '\n')
         {
             buffer[reading] = ch;
@@ -170,7 +171,7 @@ int *getPGMDataFromCMP(char *fileName){
     counter = 0; reading = 0;
     while ((ch = fgetc(fp)) != EOF)
     {
-        char buffer[4];
+        char buffer[8];
         if (ch != ' ' & ch != '\n')
         {
             buffer[reading] = ch;
@@ -187,6 +188,7 @@ int *getPGMDataFromCMP(char *fileName){
                 }
                 else{
                     sscanf(buffer, "%d", rleArrayPtr + counter - 4);
+
                 }
             }
             memset(buffer, 0, sizeof(buffer));
@@ -199,7 +201,7 @@ int *getPGMDataFromCMP(char *fileName){
         for(j = 0; j < *(rleArrayPtr + i); j++){
             *(imgArrPtr + pixel) = *(rleArrayPtr + i + 1);
             pixel++;
-            printf("%d ", *(rleArrayPtr + i + 1));
+            //printf("%d ", *(rleArrayPtr + i + 1));
         }
     }
     fclose(fp);
