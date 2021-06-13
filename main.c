@@ -9,6 +9,7 @@ int getPGMGrayValue(char *fileName);
 int getElementFromFile(char *fileName, int pos);
 int *getPGMData(char *fileName);
 int *getPGMDataFromCMP(char *fileName);
+int *getCMPData(char *fileName);
 void compress(char *inFile, char *outFile);
 void decompress(char *inFile, char *outFile);
 FILE *readFile(char *fileName);
@@ -132,6 +133,66 @@ int *getPGMData(char *fileName){
     }
     fclose(fp);
     return imgArrPtr;
+}
+int *getCMPData(char *fileName){
+
+    FILE *fp;
+    fp = readFile(fileName);
+    int reading = 0;
+    char ch;
+    int counter = 0;
+    while ((ch = fgetc(fp)) != EOF)
+    {
+        char buffer[8];
+        if (ch != ' ' & ch != '\n')
+        {
+            buffer[reading] = ch;
+            reading++;
+        }
+        else
+        {
+            reading = 0;
+            counter++;
+            if (counter > 3)
+            {
+                if (!isdigit(buffer[0])){
+                    counter--;
+                }
+            }
+            memset(buffer, 0, sizeof(buffer));
+        }
+    }
+    rewind(fp);
+    int rleLength = counter - 2;
+    int *rleArrayPtr = (int *)malloc(rleLength * sizeof(int));
+    *(rleArrayPtr) = rleLength - 1;
+    counter = 0; reading = 0;
+    while ((ch = fgetc(fp)) != EOF)
+    {
+        char buffer[8];
+        if (ch != ' ' & ch != '\n')
+        {
+            buffer[reading] = ch;
+            reading++;
+        }
+        else
+        {
+            reading = 0;
+            counter++;
+            if (counter > 3)
+            {
+                if (!isdigit(buffer[0])){
+                    counter--;
+                }
+                else{
+                    sscanf(buffer, "%d", rleArrayPtr + counter - 3);
+
+                }
+            }
+            memset(buffer, 0, sizeof(buffer));
+        }
+    }
+    return rleArrayPtr;
 }
 
 int *getPGMDataFromCMP(char *fileName){
