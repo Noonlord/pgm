@@ -19,16 +19,45 @@ FILE *writeFile(char *fileName);
 
 int main()
 {
-    char ch, fileName[25], outName[25], uncompName[25];
-    printf("Enter filename: ");
-    gets(fileName);
-    printf("Enter output compressed filename: ");
-    gets(outName);
-    compress(fileName, outName);
-    printf("Tamamlandi. \nDecompress: ");
-    gets(uncompName);
-    decompress(uncompName, "test_decoded.pgm");
-    calculateHistogram(uncompName);
+    char fileName[25];
+    int select = -1;
+    while(select != 5){
+        printf("\n1)File compression\n2)File decompression\n3)Change all instances of a color\n4)Print Histogram\n5)Exit\n>:  ");
+        scanf("%d", &select);
+        switch(select){
+            case 1:
+                printf("Enter filename to compress: ");
+                scanf("%s", fileName);
+                compress(fileName, "test_encoded.txt");
+                memset(fileName, 0, sizeof(fileName));
+                break;
+            case 2:
+                printf("Enter filename to decompress: ");
+                scanf("%s", fileName);
+                decompress(fileName, "test_decoded.pgm");
+                memset(fileName, 0, sizeof(fileName));
+                break;
+            case 3:
+                printf("Enter compressed filename to change color: ");
+                scanf("%s", fileName);
+                int colorToChange, targetColor;
+                printf("Enter which color you want to change: ");
+                scanf("%d", &colorToChange);
+                printf("Enter target color: ");
+                scanf("%d", &targetColor);
+                changeColor(fileName, colorToChange, targetColor);
+                memset(fileName, 0, sizeof(fileName));
+                break;
+            case 4:
+                printf("Enter compressed filename to print histogram: ");
+                scanf("%s", fileName);
+                calculateHistogram(fileName);
+                memset(fileName, 0, sizeof(fileName));
+                break;
+            case 5:
+                break;
+        }
+    }
     return 0;
 }
 int getElementFromFile(char *fileName, int pos)
