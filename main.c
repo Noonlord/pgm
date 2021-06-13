@@ -29,7 +29,6 @@ int main()
 }
 int getElementFromFile(char *fileName, int pos)
 {
-    printf("\ngetElementFromFile(%s, %d)", fileName, pos);
     FILE *fp;
     fp = readFile(fileName);
     int reading = 0;
@@ -43,7 +42,6 @@ int getElementFromFile(char *fileName, int pos)
         if (ch != ' ' & ch != '\n')
         {
             buffer[reading] = ch;
-            printf("bf: %s\n", buffer);
             reading++;
         }
         else
@@ -195,13 +193,11 @@ int *getPGMDataFromCMP(char *fileName){
         }
     }
     int i, j;
-    printf("\n\n");
     for (i = 0; i < rleLength; i = i + 2)
     {
         for(j = 0; j < *(rleArrayPtr + i); j++){
             *(imgArrPtr + pixel) = *(rleArrayPtr + i + 1);
             pixel++;
-            //printf("%d ", *(rleArrayPtr + i + 1));
         }
     }
     fclose(fp);
